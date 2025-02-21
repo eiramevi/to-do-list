@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,11 +10,26 @@ import {
 } from "@/components/ui/card";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Todo = () => {
   const [todo, setTodo] = useState([]);
 
   const { id } = useParams();
+
+  const navigate = useNavigate();
+
+  const handleDelete = async () => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/todolist/${id}`
+      );
+
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     const fetchTodo = async () => {
@@ -39,12 +53,18 @@ const Todo = () => {
       <div>
         <Card className="w-[750px]">
           <CardHeader>
-            <CardTitle>{todo.title}</CardTitle>
+            <CardTitle className="flex justify-between">
+              <h1>{todo.title}</h1>{" "}
+              <Button onClick={handleDelete} variant="destructive" className>
+                Delete To Do
+              </Button>
+            </CardTitle>
             <CardDescription>{todo.date}</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col items-center py-10">
             <p>{todo.description}</p>
           </CardContent>
+
           <CardFooter className="flex justify-between">
             <h1>Made with ♥ by Mario Inguito</h1>
           </CardFooter>
